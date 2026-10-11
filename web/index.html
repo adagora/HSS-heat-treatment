@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HSS Heat Treatment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a heat-treatment process sheet - header with the grade, an animated cycle,
+   a side-by-side quench test, then the numbers. Accent = steel temper colours. */
+:root {
+  --bg: #eceff2;
+  --surface: #f8f9fb;
+  --panel: #ffffff;
+  --fg: #171b21;
+  --muted: #5a6370;
+  --line: #ccd2d9;
+  --accent: #5b3f8c;      /* temper purple, ~280 °C oxide tint */
+  --accent-2: #a46a1c;    /* temper straw/bronze */
+  --water: #2569ad;
+  --oil: #b06d10;
+  --tension: #c2362f;
+  --compression: #2b5797;
+  --ok: #2f7d4f;
+  --warn: #b7791f;
+  --bad: #c2362f;
+  --chip: #e2e6eb;
+  --bath-water: #cfe3f2;
+  --bath-oil: #e9d3a6;
+  --scene: #20252c;
+  --scene-fg: #d9dee5;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111418; --surface: #171b21; --panel: #1c2128; --fg: #e5e8ec; --muted: #9aa3ae;
+    --line: #2d343d; --accent: #b39be0; --accent-2: #e0a957; --water: #6aa9ea; --oil: #e6a43f;
+    --tension: #f07a6f; --compression: #79a6e8; --ok: #6cc28f; --warn: #e3b25a; --bad: #f07a6f;
+    --chip: #262c34; --bath-water: #13324d; --bath-oil: #3d2c10; --scene: #0b0d10; --scene-fg: #c9d0d8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111418; --surface: #171b21; --panel: #1c2128; --fg: #e5e8ec; --muted: #9aa3ae;
+  --line: #2d343d; --accent: #b39be0; --accent-2: #e0a957; --water: #6aa9ea; --oil: #e6a43f;
+  --tension: #f07a6f; --compression: #79a6e8; --ok: #6cc28f; --warn: #e3b25a; --bad: #f07a6f;
+  --chip: #262c34; --bath-water: #13324d; --bath-oil: #3d2c10; --scene: #0b0d10; --scene-fg: #c9d0d8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 15px/1.55 var(--font-body);
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.01em; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); line-height: 0.95; font-weight: 700; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); line-height: 1.05; }
+h3 { font-size: 1.25rem; line-height: 1.15; }
+p { margin: 0; }
+.eyebrow { font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.1rem; max-width: 62ch; color: var(--fg); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+a { color: var(--accent); }
+button, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* header */
+header.sheet { display: grid; gap: 16px; padding-bottom: 24px; border-bottom: 2px solid var(--fg); }
+.grade { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline; font-family: var(--font-mono); font-size: 0.85rem; }
+.grade b { font-weight: 500; color: var(--accent); }
+.comp { display: flex; flex-wrap: wrap; gap: 6px; }
+.el { display: inline-grid; grid-template-columns: auto auto; gap: 0 4px; align-items: baseline; padding: 3px 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); font-family: var(--font-mono); font-size: 0.8rem; }
+.el span:first-child { font-weight: 600; }
+
+section.block { display: grid; gap: 18px; }
+.sec-head { display: grid; gap: 8px; max-width: 75ch; }
+
+/* controls */
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn {
+  appearance: none; border: 1px solid var(--line); background: var(--panel); border-radius: var(--r);
+  padding: 7px 14px; cursor: pointer; font-weight: 500; font-size: 0.9rem; line-height: 1.2;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); min-width: 92px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--panel); }
+.seg button { appearance: none; border: 0; background: transparent; padding: 7px 12px; cursor: pointer; font-size: 0.85rem; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--chip); color: var(--fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+
+/* cycle */
+.cycle { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; }
+.stage-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 12px; align-content: start; }
+.stage-card .step { font: 500 0.78rem/1 var(--font-mono); color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+.stage-card p { max-width: 60ch; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.fact { border-top: 1px solid var(--line); padding-top: 8px; display: grid; gap: 2px; min-width: 0; }
+.fact .k { font-size: 0.75rem; color: var(--muted); }
+.fact .v { font: 500 1.15rem/1.2 var(--font-mono); font-variant-numeric: tabular-nums; }
+.canvas-box { position: relative; background: var(--scene); border-radius: var(--r); overflow: hidden; min-width: 0; }
+.canvas-box canvas { display: block; width: 100%; height: 100%; }
+#cycleScene { aspect-ratio: 16 / 10; }
+.micro-wrap { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; align-items: center; }
+#microCanvas { width: 170px; height: 170px; display: block; }
+.legend { display: grid; gap: 4px; font-size: 0.8rem; }
+.micro-cap { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
+.legend div { display: flex; gap: 8px; align-items: center; }
+.sw { width: 12px; height: 12px; border-radius: 2px; border: 1px solid var(--line); flex: none; }
+.chart-box { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 10px; min-width: 0; }
+.chart-box canvas { display: block; width: 100%; }
+#cycleChart { height: 230px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { appearance: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 11px; font-size: 0.82rem; cursor: pointer; }
+.chip .n { font-family: var(--font-mono); color: var(--muted); margin-right: 5px; }
+.chip[aria-current="step"] { border-color: var(--accent); background: var(--chip); font-weight: 600; }
+
+/* quench */
+.duel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); display: grid; gap: 0; overflow: hidden; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 12px 14px 10px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.panel-head h3 { display: flex; gap: 8px; align-items: center; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.stage-pill { font: 500 0.75rem/1 var(--font-mono); padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+.stage-pill[data-stage="vapour"] { color: var(--muted); }
+.stage-pill[data-stage="boiling"] { color: var(--bad); border-color: var(--bad); }
+.stage-pill[data-stage="convection"] { color: var(--ok); border-color: var(--ok); }
+.panel .canvas-box { border-radius: 0; aspect-ratio: 1 / 0.82; }
+.readouts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.ro { padding: 9px 12px; display: grid; gap: 1px; min-width: 0; }
+.ro + .ro { border-left: 1px solid var(--line); }
+.ro .k { font-size: 0.72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ro .v { font: 500 1.02rem/1.25 var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.verdict { padding: 10px 14px; border-top: 1px solid var(--line); font-size: 0.88rem; min-height: 3.4em; display: flex; gap: 10px; align-items: flex-start; }
+.verdict .flag { flex: none; font: 600 0.72rem/1 var(--font-mono); padding: 4px 7px; border-radius: 3px; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+.flag.ok { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+.flag.warn { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+.flag.bad { background: color-mix(in srgb, var(--bad) 18%, transparent); color: var(--bad); }
+.flag.info { background: var(--chip); color: var(--muted); }
+
+.timebar { display: grid; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+.timebar-row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.clock { font: 500 1.6rem/1 var(--font-mono); font-variant-numeric: tabular-nums; min-width: 6.5ch; }
+.slider-wrap { position: relative; padding-top: 16px; }
+.slider-wrap input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
+.ticks { position: absolute; inset: 0 8px auto 8px; height: 14px; font: 400 0.68rem/1 var(--font-mono); color: var(--muted); }
+.ticks span { position: absolute; transform: translateX(-50%); }
+.events { position: relative; height: 18px; margin: 0 8px; }
+.events i { position: absolute; top: 0; width: 2px; height: 10px; transform: translateX(-1px); }
+.charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.charts canvas { height: 280px; }
+.chart-title { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; padding: 2px 4px 8px; flex-wrap: wrap; }
+.chart-title h3 { font-size: 1.05rem; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.75rem; color: var(--muted); }
+.key span { display: inline-flex; align-items: center; gap: 5px; }
+.key i { display: inline-block; width: 16px; height: 0; border-top: 2px solid; }
+.key i.dash { border-top-style: dashed; }
+.narration { background: var(--surface); border-left: 3px solid var(--accent); padding: 10px 14px; font-size: 0.95rem; min-height: 3.2em; }
+
+/* results */
+.table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.9rem; }
+th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.take { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; }
+.take div { display: grid; gap: 4px; align-content: start; border-top: 1px solid var(--line); padding-top: 10px; min-width: 0; }
+.take h3 { font-size: 1.15rem; }
+.notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.notes .box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; font-size: 0.88rem; min-width: 0; }
+.notes ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+footer { font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+
+@media (max-width: 900px) {
+  .cycle, .duel, .charts, .take, .notes { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .wrap { padding-inline: 16px; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .readouts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ro:nth-child(3) { border-left: 0; }
+  .ro:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .micro-wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .charts canvas { height: 240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="sheet">
+  <span class="eyebrow">Heat-treatment process sheet · high-speed steel</span>
+  <h1>HSS heat treatment</h1>
+  <p class="lede">How an M2 high-speed-steel tool gets its 64–66 HRC, step by step, and what changes when the hardening quench is done in water instead of oil.</p>
+  <div class="grade"><span><b>AISI M2</b> · HS 6-5-2 · W.-Nr. 1.3343</span><span class="muted">typical composition, wt.%</span></div>
+  <div class="comp" aria-label="Typical composition in weight percent">
+    <span class="el"><span>C</span><span>0.88</span></span>
+    <span class="el"><span>W</span><span>6.2</span></span>
+    <span class="el"><span>Mo</span><span>5.0</span></span>
+    <span class="el"><span>Cr</span><span>4.1</span></span>
+    <span class="el"><span>V</span><span>1.9</span></span>
+    <span class="el"><span>Fe</span><span>bal.</span></span>
+  </div>
+</header>
+
+<!-- ============================== CYCLE ============================== -->
+<section class="block" id="cycle" aria-labelledby="cycle-h">
+  <div class="sec-head">
+    <span class="eyebrow">Part 1</span>
+    <h2 id="cycle-h">The hardening cycle</h2>
+    <p class="muted">HSS is heated in steps to just below its melting point, quenched, and tempered three times. Play the cycle or jump to a step. Temperatures are for M2; the time axis is schematic, real durations are written on the curve.</p>
+  </div>
+
+  <div class="controls">
+    <button class="btn primary" id="cyclePlay" type="button">Play</button>
+    <button class="btn" id="cycleRestart" type="button">Restart</button>
+    <div class="chips" id="cycleChips" role="list"></div>
+  </div>
+
+  <div class="cycle">
+    <div class="canvas-box" id="cycleScene"><canvas id="sceneCanvas" aria-label="Animated scene: the tool in the furnace, salt bath, quench tank and tempering furnace"></canvas></div>
+    <div class="stage-card" aria-live="polite">
+      <span class="step" id="stageStep">Step 4 of 8</span>
+      <h3 id="stageTitle">Austenitize</h3>
+      <p id="stageText"></p>
+      <div class="facts">
+        <div class="fact"><span class="k">Temperature</span><span class="v" id="factT">–</span></div>
+        <div class="fact"><span class="k">Hardness</span><span class="v" id="factH">–</span></div>
+        <div class="fact"><span class="k">Retained austenite</span><span class="v" id="factRA">–</span></div>
+      </div>
+      <div class="micro-wrap">
+        <canvas id="microCanvas" width="170" height="170" aria-label="Schematic microstructure at this step"></canvas>
+        <div>
+          <div class="micro-cap">Microstructure, schematic · field ≈ 40 µm</div>
+          <div class="legend" id="microLegend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chart-box"><canvas id="cycleChart" aria-label="Temperature of the tool through the whole cycle"></canvas></div>
+</section>
+
+<!-- ============================== QUENCH ============================== -->
+<section class="block" id="quench" aria-labelledby="quench-h">
+  <div class="sec-head">
+    <span class="eyebrow">Part 2 · simulation</span>
+    <h2 id="quench-h">Hardening quench: water vs oil</h2>
+    <p class="muted">A 16 × 16 mm M2 tool bit is plunged from 1210 °C. Heat flow, the martensite transformation and the resulting stresses are computed on the cross-section, far from the bar ends. Same steel, same bar; only the quenchant differs. Time runs on a log scale so the first seconds are not lost.</p>
+  </div>
+
+  <div class="timebar">
+    <div class="timebar-row">
+      <button class="btn primary" id="qPlay" type="button">Play</button>
+      <button class="btn" id="qRestart" type="button">Restart</button>
+      <span class="clock" id="qClock" aria-live="off">0.0 s</span>
+      <div class="seg" role="group" aria-label="Map shown on the cross-sections">
+        <button type="button" data-view="T" aria-pressed="true">Temperature</button>
+        <button type="button" data-view="f" aria-pressed="false">Martensite</button>
+        <button type="button" data-view="s" aria-pressed="false">Stress</button>
+      </div>
+      <div class="seg" role="group" aria-label="Playback speed">
+        <button type="button" data-speed="0.5" aria-pressed="false">0.5×</button>
+        <button type="button" data-speed="1" aria-pressed="true">1×</button>
+        <button type="button" data-speed="2" aria-pressed="false">2×</button>
+      </div>
+    </div>
+    <div class="slider-wrap">
+      <div class="ticks" id="qTicks" aria-hidden="true"></div>
+      <input type="range" id="qSlider" min="0" max="1000" value="0" step="1" aria-label="Time since the bar entered the quenchant">
+    </div>
+    <div class="events" id="qEvents" aria-hidden="true"></div>
+  </div>
+
+  <p class="narration" id="qNarration" aria-live="polite"></p>
+
+  <div class="duel">
+    <article class="panel" id="panel-water">
+      <div class="panel-head">
+        <h3><span class="dot" style="background:var(--water)"></span>Water · 20 °C, still</h3>
+        <span class="stage-pill" data-role="stage" data-stage="vapour">vapour blanket</span>
+      </div>
+      <div class="canvas-box"><canvas data-role="canvas" aria-label="Cross-section of the tool bit in water"></canvas></div>
+      <div class="readouts">
+        <div class="ro"><span class="k">Corner</span><span class="v" data-role="Tk">–</span></div>
+        <div class="ro"><span class="k">Face centre</span><span class="v" data-role="Tf">–</span></div>
+        <div class="ro"><span class="k">Core</span><span class="v" data-role="Tc">–</span></div>
+        <div class="ro"><span class="k">Martensite (core)</span><span class="v" data-role="fm">–</span></div>
+      </div>
+      <div class="verdict" data-role="verdict"></div>
+    </article>
+    <article class="panel" id="panel-oil">
+      <div class="panel-head">
+        <h3><span class="dot" style="background:var(--oil)"></span>Quench oil · 50 °C, still</h3>
+        <span class="stage-pill" data-role="stage" data-stage="vapour">vapour blanket</span>
+      </div>
+      <div class="canvas-box"><canvas data-role="canvas" aria-label="Cross-section of the tool bit in oil"></canvas></div>
+      <div class="readouts">
+        <div class="ro"><span class="k">Corner</span><span class="v" data-role="Tk">–</span></div>
+        <div class="ro"><span class="k">Face centre</span><span class="v" data-role="Tf">–</span></div>
+        <div class="ro"><span class="k">Core</span><span class="v" data-role="Tc">–</span></div>
+        <div class="ro"><span class="k">Martensite (core)</span><span class="v" data-role="fm">–</span></div>
+      </div>
+      <div class="verdict" data-role="verdict"></div>
+    </article>
+  </div>
+
+  <div class="charts">
+    <div class="chart-box">
+      <div class="chart-title">
+        <h3>Cooling curves on the CCT diagram</h3>
+        <div class="key">
+          <span><i style="border-color:var(--water)"></i>water core</span>
+          <span><i class="dash" style="border-color:var(--water)"></i>corner</span>
+          <span><i style="border-color:var(--oil)"></i>oil core</span>
+          <span><i class="dash" style="border-color:var(--oil)"></i>corner</span>
+        </div>
+      </div>
+      <canvas id="cctChart" aria-label="Corner and core temperature against log time, over schematic CCT fields of M2"></canvas>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">
+        <h3>Tension in the fresh, brittle martensite</h3>
+        <div class="key">
+          <span><i style="border-color:var(--water)"></i>water</span>
+          <span><i style="border-color:var(--oil)"></i>oil</span>
+          <span><i class="dash" style="border-color:var(--bad)"></i>crack thresholds</span>
+        </div>
+      </div>
+      <canvas id="stressChart" aria-label="Largest tensile stress in material that is already mostly martensite, against log time"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== RESULTS ============================== -->
+<section class="block" id="results" aria-labelledby="results-h">
+  <div class="sec-head">
+    <span class="eyebrow">Part 3</span>
+    <h2 id="results-h">What the numbers say</h2>
+  </div>
+  <div class="table-wrap"><table id="resultsTable"></table></div>
+  <div class="take" id="takeaways"></div>
+  <div class="notes">
+    <div class="box">
+      <h3>How the simulation works</h3>
+      <ul>
+        <li>Heat conduction on a quarter of the 16 mm square section (finite elements), with a surface heat-transfer coefficient that follows the quenchant's three stages: vapour blanket, boiling, convection.</li>
+        <li>Martensite forms below M<sub>s</sub> ≈ 215 °C by the Koistinen–Marburger law, tuned to leave 25 % retained austenite at 20 °C. Its latent heat is included.</li>
+        <li>Stresses: thermal and transformation strains (martensite is ~1 % larger than austenite), von Mises plasticity with temperature- and phase-dependent yield strength, and transformation plasticity. Long bar with free ends.</li>
+        <li>Crack thresholds are fracture-mechanics estimates for as-quenched M2, K<sub>Ic</sub> ≈ 10–15 MPa·√m, for three cases of surface flaw size and notch sharpness.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>What it leaves out</h3>
+      <ul>
+        <li>Property values are handbook-typical for M2, not measured for one heat of steel. Trends are reliable; individual MPa values are not.</li>
+        <li>Wetting is assumed uniform. Real water quenches rewet patchily, which adds local stress and bending.</li>
+        <li>No notches, holes, bar ends or thin cutting edges; their effect is covered only by the crack-threshold cases.</li>
+        <li>No delayed cracking at room temperature and no hydrogen. The CCT fields are schematic, drawn after published HS 6-5-2 diagrams.</li>
+      </ul>
+    </div>
+  </div>
+  <footer>
+    Sources: ASM Handbook Vol. 4, Heat Treating (tool steels); G. Roberts, G. Krauss, R. Kennedy, <i>Tool Steels</i>, 5th ed.; Hudson Tool Steel M2 data sheet (Ac1 832 °C, hardening 1190–1230 °C); A. Buczek, T. Telejko, oil heat-transfer measurements (peak 4.7–6 kW/m²K at 520–550 °C); D. Koistinen, R. Marburger, Acta Metall. 7 (1959) 59; J.-B. Leblond et al., transformation plasticity. Simulation code: <span class="mono">sim/</span> in this repository.
+  </footer>
+</section>
+
+</div>
+<script src="quench_data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

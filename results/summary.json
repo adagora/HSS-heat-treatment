@@ -1,0 +1,80 @@
+{
+  "water": {
+    "quenchant": "Water, 20 \u00b0C, still",
+    "time_to_Ms_s": {
+      "corner": 5.332862606547114,
+      "face": 8.245174014549931,
+      "core": 13.676016551124778
+    },
+    "core_minus_corner_at_corner_Ms_C": 797.3782171714485,
+    "core_minus_face_at_face_Ms_C": 458.8237010211635,
+    "face_cooling_rate_at_Ms_C_per_s": 29.590192277164192,
+    "t8_5_core_s": 1.9482480209554378,
+    "quench_time_to_core_60C_s": 41.26346434913759,
+    "max_tensile_stress_in_martensite_MPa": 161.62421380887992,
+    "time_of_max_tensile_stress_s": 23.95248162546883,
+    "max_tensile_stress_anywhere_MPa": 466.3422511934473,
+    "max_plastic_strain_pct": 2.9934481041394343,
+    "mean_plastic_strain_pct": 0.7151238534589819,
+    "martensite_fraction_end": {
+      "corner": 0.6931287857995303,
+      "core": 0.6679176688786588
+    },
+    "crack_scenarios": [
+      {
+        "label": "smooth face, fine flaw",
+        "threshold_MPa": 1689.5976709956426,
+        "exceeded": false
+      },
+      {
+        "label": "typical tool feature",
+        "threshold_MPa": 427.4381575729635,
+        "exceeded": false
+      },
+      {
+        "label": "sharp notch + carbide cluster",
+        "threshold_MPa": 137.10085296481566,
+        "exceeded": true
+      }
+    ]
+  },
+  "oil": {
+    "quenchant": "Mineral quench oil, 50 \u00b0C, still",
+    "time_to_Ms_s": {
+      "corner": 51.78128131623163,
+      "face": 54.85426600620387,
+      "core": 58.05548579820467
+    },
+    "core_minus_corner_at_corner_Ms_C": 19.056512943422945,
+    "core_minus_face_at_face_Ms_C": 8.793891461725337,
+    "face_cooling_rate_at_Ms_C_per_s": 1.9386047059334919,
+    "t8_5_core_s": 5.303055792202809,
+    "quench_time_to_core_60C_s": 300.2595054722394,
+    "max_tensile_stress_in_martensite_MPa": 11.9014967373459,
+    "time_of_max_tensile_stress_s": 202.25950547223945,
+    "max_tensile_stress_anywhere_MPa": 315.8357887866851,
+    "max_plastic_strain_pct": 1.1178856165910647,
+    "mean_plastic_strain_pct": 0.18249779883927467,
+    "martensite_fraction_end": {
+      "corner": 0.6700343849971003,
+      "core": 0.6679493393898408
+    },
+    "crack_scenarios": [
+      {
+        "label": "smooth face, fine flaw",
+        "threshold_MPa": 1689.5976709956426,
+        "exceeded": false
+      },
+      {
+        "label": "typical tool feature",
+        "threshold_MPa": 427.4381575729635,
+        "exceeded": false
+      },
+      {
+        "label": "sharp notch + carbide cluster",
+        "threshold_MPa": 137.10085296481566,
+        "exceeded": false
+      }
+    ]
+  }
+}
