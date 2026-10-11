@@ -4,3 +4,5 @@ results/.cache.pkl
 dist/
 screenshots/
 node_modules/
+video/build/
+video/media/

@@ -3,6 +3,15 @@
 An animation of how a high-speed-steel (AISI M2 / HS 6-5-2) tool is hardened, and a simulation of
 what changes when the hardening quench is done in **water** instead of **oil**.
 
+## Showcase: narrated explainer
+
+[![Narrated explainer video: hardening high-speed steel, and water vs oil. Click to play.](media/hss_explainer_poster.png)](media/hss_explainer.mp4)
+
+A narrated explainer (5:43) in the style of 3Blue1Brown, made with [manim](https://www.manim.community/)
+and Gemini text-to-speech: the M2 hardening cycle, the martensite law, the three cooling stages of a
+liquid quench, and the simulated water vs oil quench of a 16 mm tool bit. Click the image to play
+`media/hss_explainer.mp4`.
+
 ![Water vs oil quench of a 16 mm M2 tool bit](media/hss_quench_water_vs_oil.gif)
 
 ## What is in here
@@ -10,7 +19,8 @@ what changes when the hardening quench is done in **water** instead of **oil**.
 | Path | What it is |
 |---|---|
 | `web/index.html` | The interactive animation. Open it in a browser (no server needed). |
-| `media/` | Rendered videos: the full cycle and the water-vs-oil quench (MP4), plus a GIF preview. |
+| `media/` | The narrated explainer (`hss_explainer.mp4`), screen recordings of the cycle and the water-vs-oil quench, and a GIF preview. |
+| `video/` | Source of the narrated explainer: narration text, Gemini TTS script, manim scene. |
 | `docs/HSS_heat_treatment_study.md` | Study notes: the M2 cycle step by step, quenchant physics, results, references. |
 | `sim/` | Python model: 2-D quench of a square tool bit (`model2d.py`), 1-D round blank (`model.py`), M2 properties, quenchant curves. |
 | `figures/` | Static figures made by the model. |
@@ -53,6 +63,10 @@ python -m sim.run                 # simulate water + oil, write web/quench_data.
 python -m sim.run --quick         # coarse mesh, ~1 min
 python -m sim.run --figures-only  # redraw figures from the last run
 python -m unittest discover -s tests -t .
+
+# narrated explainer (needs manim, ffmpeg and a Gemini API key; see video/README.md)
+GEMINI_API_KEY=... python video/tts.py
+manim -r 1920,1080 --fps 30 video/explainer.py HSSExplainer
 
 # optional, needs Node + Playwright + ffmpeg
 node tools/screenshot.mjs out/     # screenshots, checks console errors and overflow
